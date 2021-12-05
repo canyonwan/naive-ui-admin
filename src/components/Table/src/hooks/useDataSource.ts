@@ -14,12 +14,25 @@ export function useDataSource(
   watchEffect(() => {
     tableData.value = unref(dataSourceRef);
   });
-
+  
+ 
+  // 此处propsRef根本没有dataSource属性， 导致dataSourceRef永远没有值，传进来的tableData会永远不起作用
+  // watch(
+  // () => unref(propsRef).dataSource,
+  //  () => {
+  //    const { dataSource }: any = unref(propsRef);
+  //    dataSource && (dataSourceRef.value = dataSource);
+  //   },
+  //   {
+  //    immediate: true,
+  // }
+  //);
+  // Fix:修改为如下，并将下面的onMounted去掉，否则会清空tableData的数据
   watch(
-    () => unref(propsRef).dataSource,
+    () => unref(propsRef).tableData,
     () => {
-      const { dataSource }: any = unref(propsRef);
-      dataSource && (dataSourceRef.value = dataSource);
+      const { tableData }: any = unref(propsRef);
+      tableData && (dataSourceRef.value = tableData);
     },
     {
       immediate: true,
@@ -107,11 +120,11 @@ export function useDataSource(
     }
   }
 
-  onMounted(() => {
-    setTimeout(() => {
-      fetch();
-    }, 16);
-  });
+// onMounted(() => {
+//    setTimeout(() => {
+//      fetch();
+//    }, 16);
+//  });
 
   function setTableData(values) {
     dataSourceRef.value = values;
